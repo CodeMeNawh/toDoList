@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function TaskFrom({ onSubmit, onClose }) {
+export default function TaskForm({ onSubmit, onClose,  }) {
     
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -33,14 +33,15 @@ export default function TaskFrom({ onSubmit, onClose }) {
                 type="submit"
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             >
-                Add Task
+                +Task 
             </button>
+           
             <button 
-                type="submit"
+                
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 onClick={onClose}
             >
-                Close
+                X
             </button>
             </div>
             

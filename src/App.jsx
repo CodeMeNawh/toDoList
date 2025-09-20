@@ -19,7 +19,7 @@ function App() {
   const handleAddTask = (newTask, status) => {
     setTasks((prev) => [
       ...prev,
-      { ...newTask, id: Date.now(), status },
+      { ...newTask, id: Date.now(), status, subtasks : [], },
     ]);
     setOpenForm(null)
   }
@@ -51,11 +51,49 @@ function App() {
     );
   };
 
+  const handleAddSubtask = (taskId, subtask) => {
+  setTasks(prevTasks =>
+    prevTasks.map(task =>
+      task.id === taskId
+        ? { ...task, subtasks: [...task.subtasks, { text: subtask.title, done: false }] }
+        : task
+    )
+  );
+};
+
+  const handleToggleSubtask = (taskId, subtaskIndex) => {
+  setTasks(prevTasks =>
+    prevTasks.map(task =>
+      task.id === taskId
+        ? {
+            ...task,
+            subtasks: task.subtasks.map((sub, idx) =>
+              idx === subtaskIndex ? { ...sub, done: !sub.done } : sub
+            )
+          }
+        : task
+    )
+  );
+};
+  const handleDeleteSubtask = (taskId, subtaskIndex) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
+          ? {
+            ...task,
+            subtasks: task.subtasks.filter((_,idx) =>
+            idx !== subtaskIndex)
+      
+        } : task
+      )
+    )
+  }
+
   
 
   return (
     <>
-      <div className="w-full p-4 flex gap-4 justify-center items-start ">
+      <div className="min-h-screen w-full p-8 flex gap-6 justify-start items-start overflow-x-auto bg-gradient-to-br from-blue-100 to-blue-200">
         {["to do", "doing", "done"].map((status) => (
           <CustomCard
             key={status}
@@ -66,10 +104,14 @@ function App() {
               <Task
                 key={task.id}
                 title={task.title}
+                task={task}
                 description={task.description}
                 onEdit={() => setEditingTask(task)}
                 onMove={() => handleMoveTask(task.id)}
                 onDelete={() => handleDeleteTask(task.id)}
+                onAddSub={(subtask) => handleAddSubtask(task.id, subtask)}
+                onDeleteSub={(subtaskIndex)=>handleDeleteSubtask(task.id,subtaskIndex)}
+                onToggleSub={(subIndex) => handleToggleSubtask(task.id, subIndex)}
               />)}    
             {openForm === status && (
             <TaskForm
