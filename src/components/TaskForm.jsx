@@ -1,17 +1,36 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { TaskContext } from "../store/TaskContext";
 
-export default function TaskForm({ onSubmit, onClose,  }) {
+
+export default function TaskForm({  onClose, task  }) {
     
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const { addTask, editTask, openForm, setOpenForm } = useContext(TaskContext);
+
+    
+    useEffect(() => {
+        if (task) {
+            setTitle(task.title);
+            setDescription(task.description);
+        } else {
+            setTitle("");
+            setDescription("");
+        }
+    }, [task]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({ title, description });
+        if (task) {
+            editTask(task.id, { title, description });
+            setOpenForm(null);
+        } else {
+            addTask({ title, description }, openForm);
+            setOpenForm(null);
+        }
         setTitle("");
         setDescription("");
     };
-
     return (
         <form onSubmit={handleSubmit} className="space-y-2">
             <input 
@@ -33,11 +52,11 @@ export default function TaskForm({ onSubmit, onClose,  }) {
                 type="submit"
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             >
-                +Task 
+                {task ? "Save" : "+Task"}
             </button>
            
             <button 
-                
+                type="button"
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 onClick={onClose}
             >
